@@ -21,26 +21,26 @@
       };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.24.1/plotly.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=7.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=8.0" />
   </head>
   <body class="bg-[#f8fafc] text-[#0f172a] antialiased min-h-screen flex flex-col justify-between">
     
     <!-- Navigation Header -->
-    <header class="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-30 shadow-sm">
-      <div class="flex items-center gap-3">
-        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-600 text-white font-extrabold text-xs shadow-md font-mono">ANN</span>
+    <header class="h-20 border-b border-slate-200 bg-white/80 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+      <div class="flex items-center gap-4">
+        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-600 text-white font-black text-sm shadow-md font-mono">ANN</span>
         <div>
-          <h1 class="text-xs font-black tracking-widest uppercase">Iris Explorer</h1>
-          <p class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Classification Workspace</p>
+          <h1 class="text-sm font-black tracking-widest uppercase">Iris Explorer</h1>
+          <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Classification Workspace</p>
         </div>
       </div>
       
       <div class="flex items-center gap-3">
-        <div class="text-[9px] text-slate-400 text-right uppercase tracking-wider">
+        <div class="text-[10px] text-slate-400 text-right uppercase tracking-wider">
           <p class="font-bold text-slate-700">Researcher</p>
           <p>Atharv Raval</p>
         </div>
-        <div class="h-8 w-8 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center font-bold text-purple-600 text-xs">
+        <div class="h-9 w-9 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center font-bold text-purple-600 text-sm">
           AR
         </div>
       </div>
@@ -57,70 +57,70 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             
             <!-- Morphological Features Card -->
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between min-h-[280px]">
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between min-h-[300px]">
               <div>
-                <h3 class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2 font-mono">Morphological Features</h3>
+                <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-3 font-mono">Morphological Features</h3>
                 <p class="text-[10px] text-slate-400 mb-4 leading-relaxed font-mono">Adjust parameters of the specimen.</p>
               </div>
               
-              <div class="space-y-3 flex-grow flex flex-col justify-center">
+              <div class="space-y-4 flex-grow flex flex-col justify-center">
                 <div>
-                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-0.5 text-slate-400 font-mono">
+                  <div class="flex justify-between text-xs font-bold uppercase tracking-wider mb-1 text-slate-400 font-mono">
                     <span>Sepal Length</span>
-                    <span id="label-sepal-length" class="text-purple-600 font-extrabold">5.1 cm</span>
+                    <span id="label-sepal-length" class="text-purple-600 font-black text-sm">5.1 cm</span>
                   </div>
-                  <input type="range" id="slide-sepal-length" min="4.3" max="7.9" step="0.1" value="5.1" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600">
+                  <input type="range" id="slide-sepal-length" min="4.3" max="7.9" step="0.1" value="5.1" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600">
                 </div>
                 <div>
-                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-0.5 text-slate-400 font-mono">
+                  <div class="flex justify-between text-xs font-bold uppercase tracking-wider mb-1 text-slate-400 font-mono">
                     <span>Sepal Width</span>
-                    <span id="label-sepal-width" class="text-purple-600 font-extrabold">3.5 cm</span>
+                    <span id="label-sepal-width" class="text-purple-600 font-black text-sm">3.5 cm</span>
                   </div>
-                  <input type="range" id="slide-sepal-width" min="2.0" max="4.4" step="0.1" value="3.5" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600">
+                  <input type="range" id="slide-sepal-width" min="2.0" max="4.4" step="0.1" value="3.5" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600">
                 </div>
                 <div>
-                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-0.5 text-slate-400 font-mono">
+                  <div class="flex justify-between text-xs font-bold uppercase tracking-wider mb-1 text-slate-400 font-mono">
                     <span>Petal Length</span>
-                    <span id="label-petal-length" class="text-purple-600 font-extrabold">1.4 cm</span>
+                    <span id="label-petal-length" class="text-purple-600 font-black text-sm">1.4 cm</span>
                   </div>
-                  <input type="range" id="slide-petal-length" min="1.0" max="6.9" step="0.1" value="1.4" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600">
+                  <input type="range" id="slide-petal-length" min="1.0" max="6.9" step="0.1" value="1.4" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600">
                 </div>
                 <div>
-                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-0.5 text-slate-400 font-mono">
+                  <div class="flex justify-between text-xs font-bold uppercase tracking-wider mb-1 text-slate-400 font-mono">
                     <span>Petal Width</span>
-                    <span id="label-petal-width" class="text-purple-600 font-extrabold">0.2 cm</span>
+                    <span id="label-petal-width" class="text-purple-600 font-black text-sm">0.2 cm</span>
                   </div>
-                  <input type="range" id="slide-petal-width" min="0.1" max="2.5" step="0.1" value="0.2" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600">
+                  <input type="range" id="slide-petal-width" min="0.1" max="2.5" step="0.1" value="0.2" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600">
                 </div>
               </div>
             </div>
 
             <!-- Prediction Output Card -->
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between min-h-[280px]">
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between min-h-[300px]">
               <div class="flex justify-between items-start font-mono mb-2">
                 <div>
-                  <p class="text-[10px] uppercase font-bold tracking-widest text-slate-400">Classification Outcome</p>
+                  <p class="text-xs uppercase font-black tracking-widest text-slate-400">Classification Outcome</p>
                   <div class="flex items-baseline gap-2 mt-1">
-                    <h4 id="predictionName" class="text-base font-black text-slate-900 tracking-wider">IRIS SETOSA</h4>
-                    <p id="predictionScientific" class="text-[9px] text-slate-400 italic">Iris setosa</p>
+                    <h4 id="predictionName" class="text-lg font-black text-slate-900 tracking-wider">IRIS SETOSA</h4>
+                    <p id="predictionScientific" class="text-xs text-slate-400 italic">Iris setosa</p>
                   </div>
                 </div>
-                <div class="bg-slate-50 rounded-lg px-2.5 py-1 border border-slate-200 text-center font-bold">
-                  <span id="confidenceValue" class="text-xs font-black text-purple-600 font-mono">—</span>
+                <div class="bg-slate-50 rounded-lg px-3 py-1.5 border border-slate-200 text-center font-bold">
+                  <span id="confidenceValue" class="text-sm font-black text-purple-600 font-mono">—</span>
                 </div>
               </div>
 
               <!-- Specimen Preview & Summary -->
               <div class="flex gap-4 items-center flex-grow justify-center">
-                <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-50 w-24 h-24 shrink-0 shadow-inner">
+                <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-50 w-28 h-28 shrink-0 shadow-inner">
                   <img id="staticFlowerImg" src="https://upload.wikimedia.org/wikipedia/commons/5/56/Kosaciec_szczecinkowaty_Iris_setosa.jpg" alt="Iris species" class="w-full h-full object-cover">
                 </div>
-                <div class="bg-slate-50 rounded-xl p-3 border border-slate-200 text-[10px] text-slate-500 leading-relaxed font-mono flex-grow h-24 overflow-y-auto w-full">
+                <div class="bg-slate-50 rounded-xl p-3 border border-slate-200 text-xs text-slate-500 leading-relaxed font-mono flex-grow h-28 overflow-y-auto w-full">
                   <p id="predictionSummary">Loading prediction summary...</p>
                 </div>
               </div>
 
-              <div class="mt-2 pt-2 border-t border-slate-100 flex justify-between items-center text-[9px] text-slate-400 font-mono">
+              <div class="mt-2 pt-2 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400 font-mono">
                 <span>Inference speed:</span>
                 <span id="inferenceValue" class="font-bold text-slate-600">— ms</span>
               </div>
@@ -130,12 +130,12 @@
         </div>
 
         <!-- Right: 3D PCA Feature Cluster -->
-        <div class="lg:col-span-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between min-h-[280px]">
+        <div class="lg:col-span-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between min-h-[300px]">
           <div>
-            <h3 class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2 font-mono">3D PCA Feature Cluster</h3>
+            <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 font-mono">3D PCA Feature Cluster</h3>
             <p class="text-[10px] text-slate-400 leading-relaxed font-mono">Interactive WebGL space mapping coordinates of specimen vs training dataset.</p>
           </div>
-          <div class="flex-grow relative min-h-[200px] mt-2 rounded-xl overflow-hidden border border-slate-100 bg-[#f8fafc]">
+          <div class="flex-grow relative min-h-[220px] mt-2 rounded-xl overflow-hidden border border-slate-100 bg-[#f8fafc]">
             <div id="pcaDiv" class="absolute inset-0 w-full h-full"></div>
           </div>
         </div>
@@ -148,7 +148,7 @@
         <!-- Reference Distributions Table (Left) -->
         <div class="md:col-span-7 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between font-mono">
           <div>
-            <h3 class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-3">Botanical Species Benchmarks</h3>
+            <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Botanical Species Benchmarks</h3>
             <p class="text-[10px] text-slate-400 mb-4 leading-relaxed">Typical feature spans for setosa, versicolor, and virginica in the Iris dataset (Average values in parentheses).</p>
           </div>
           
@@ -193,7 +193,7 @@
         <!-- Model Telemetry specifications (Right) -->
         <div class="md:col-span-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between font-mono">
           <div>
-            <h3 class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-3">Model Specifications</h3>
+            <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Model Specifications</h3>
             <p class="text-[10px] text-slate-400 mb-4 leading-relaxed">Neural network training parameter logs and configurations.</p>
           </div>
           
@@ -236,6 +236,6 @@
     </footer>
 
     <!-- Script loaded with version cache buster -->
-    <script src="{{ url_for('static', filename='script.js') }}?v=7.0"></script>
+    <script src="{{ url_for('static', filename='script.js') }}?v=8.0"></script>
   </body>
 </html>
