@@ -43,7 +43,8 @@ const clearHistoryButton = document.getElementById('clearHistory');
 
 const STORAGE_KEY = 'irisvision-history';
 let retrainChart = null;
-let pcaDataCache = null;
+let staticPcaPoints = null;
+let pcaDataCache = null; // Store user point for theme changes
 
 // Theme Toggle
 function getThemePreference() {
@@ -115,8 +116,17 @@ function updateSliderLabels() {
   });
 });
 
+let isPredicting = false;
+let pendingPrediction = false;
+
 // Fetch Real-time Prediction
 async function fetchPrediction() {
+  if (isPredicting) {
+    pendingPrediction = true;
+    return;
+  }
+  isPredicting = true;
+
   const payload = {
     "sepal length (cm)": parseFloat(slideSepalLength.value),
     "sepal width (cm)": parseFloat(slideSepalWidth.value),
@@ -135,9 +145,17 @@ async function fetchPrediction() {
 
     renderPrediction(data);
     updateNeuralSvg(data.activations);
-    fetchPcaCoordinates(payload);
+    
+    pcaDataCache = data.userPoint;
+    drawPcaPlot(data.userPoint);
   } catch (err) {
     console.error(err.message);
+  } finally {
+    isPredicting = false;
+    if (pendingPrediction) {
+      pendingPrediction = false;
+      fetchPrediction();
+    }
   }
 }
 
@@ -310,27 +328,8 @@ function updateNeuralSvg(activations) {
   }
 }
 
-// Plotly 3D PCA
-async function fetchPcaCoordinates(payload) {
-  try {
-    const res = await fetch('/pca', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-
-    pcaDataCache = data;
-    drawPcaPlot(data);
-  } catch (err) {
-    console.error('PCA fetch failed:', err);
-  }
-}
-
-function drawPcaPlot(data) {
-  const points = data.points;
-  const user = data.userPoint;
+function drawPcaPlot(userPoint) {
+  if (!staticPcaPoints || !userPoint) return;
   
   const speciesData = {
     setosa: { x: [], y: [], z: [], name: 'Setosa', mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#3b82f6', opacity: 0.6 } },
@@ -338,7 +337,7 @@ function drawPcaPlot(data) {
     virginica: { x: [], y: [], z: [], name: 'Virginica', mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#10b981', opacity: 0.6 } }
   };
 
-  points.forEach(p => {
+  staticPcaPoints.forEach(p => {
     if (speciesData[p.species]) {
       speciesData[p.species].x.push(p.x);
       speciesData[p.species].y.push(p.y);
@@ -347,9 +346,9 @@ function drawPcaPlot(data) {
   });
 
   const userTrace = {
-    x: [user.x],
-    y: [user.y],
-    z: [user.z],
+    x: [userPoint.x],
+    y: [userPoint.y],
+    z: [userPoint.z],
     name: 'Current Flower',
     mode: 'markers',
     type: 'scatter3d',
@@ -500,11 +499,22 @@ clearHistoryButton.addEventListener('click', () => {
   renderHistory();
 });
 
+async function loadStaticPca() {
+  try {
+    const res = await fetch('/pca_static');
+    const data = await res.json();
+    staticPcaPoints = data.points;
+  } catch (err) {
+    console.error("Failed loading static PCA:", err);
+  }
+}
+
 // Initialization
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
   applyTheme(getThemePreference());
   updateSliderLabels();
   initNeuralSvg();
+  await loadStaticPca();
   fetchPrediction();
   renderHistory();
 });

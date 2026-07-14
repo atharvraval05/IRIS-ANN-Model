@@ -23,6 +23,19 @@ model(np.zeros((1, 4)))
 iris = load_iris()
 FEATURE_NAMES = list(iris.feature_names)
 CLASS_NAMES = [name.lower() for name in iris.target_names]
+
+# Fit PCA globally once on startup
+pca_transformer = PCA(n_components=3)
+X_pca = pca_transformer.fit_transform(iris.data)
+STATIC_PCA_POINTS = [
+    {
+        "x": float(coords[0]),
+        "y": float(coords[1]),
+        "z": float(coords[2]),
+        "species": CLASS_NAMES[target]
+    }
+    for coords, target in zip(X_pca, iris.target)
+]
 CLASS_DISPLAY = {
     "setosa": {"name": "Iris Setosa", "scientific": "Iris setosa", "family": "Iridaceae", "genus": "Iris", "species": "setosa", "regions": ["North America", "Europe"], "colors": ["White", "Lavender"], "season": "Spring", "height": "30–60 cm", "width": "15–30 cm", "habitat": "Dry, open grasslands", "importance": "Important pollinator support and educational model species", "facts": ["Often grows in colder climates", "Has the smallest petals of the three species"], "pollination": "Bees and flies", "climate": "Cool to temperate", "lifecycle": "Early spring bloom with rapid seed maturity", "uses": ["Botanical research", "Garden ornamentals"], "conservation": "Least Concern", "medicinal": "Occasionally used in traditional herbal studies", "watering": "Low to moderate", "sunlight": "Full sun", "difficulty": "Easy"},
     "versicolor": {"name": "Iris Versicolor", "scientific": "Iris versicolor", "family": "Iridaceae", "genus": "Iris", "species": "versicolor", "regions": ["North America", "Canada"], "colors": ["Purple", "Violet"], "season": "Late spring", "height": "40–90 cm", "width": "20–40 cm", "habitat": "Wet meadows and marsh edges", "importance": "Common indicator of wetland ecology", "facts": ["Often grows near wetlands", "Mid-range petals and strong color contrast"], "pollination": "Bees and butterflies", "climate": "Moist temperate", "lifecycle": "Perennial rhizome with spring flowering", "uses": ["Landscape restoration", "Ecological studies"], "conservation": "Least Concern", "medicinal": "Limited traditional use", "watering": "Moderate", "sunlight": "Partial sun", "difficulty": "Moderate"},
@@ -173,7 +186,15 @@ def predict():
             downsampled = [float(x) for x in act_vals]
         act_data.append(downsampled)
 
+    user_pca = pca_transformer.transform(features)[0]
+    user_point = {
+        "x": float(user_pca[0]),
+        "y": float(user_pca[1]),
+        "z": float(user_pca[2])
+    }
+
     payload_response = {
+        "userPoint": user_point,
         "predictedClass": predicted_label,
         "displayName": CLASS_DISPLAY[predicted_label]["name"],
         "scientificName": CLASS_DISPLAY[predicted_label]["scientific"],
@@ -195,42 +216,9 @@ def predict():
     return jsonify(payload_response)
 
 
-@app.route("/pca", methods=["POST"])
-def get_pca():
-    payload = request.get_json(silent=True) or {}
-    
-    # Read user values or default Setosa values
-    sepal_length = float(payload.get("sepal length (cm)", 5.1))
-    sepal_width = float(payload.get("sepal width (cm)", 3.5))
-    petal_length = float(payload.get("petal length (cm)", 1.4))
-    petal_width = float(payload.get("petal width (cm)", 0.2))
-    
-    X_data = iris.data  # shape (150, 4)
-    y_data = iris.target
-    
-    pca = PCA(n_components=3)
-    X_pca = pca.fit_transform(X_data)
-    
-    user_point = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
-    user_pca = pca.transform(user_point)[0]
-    
-    points = []
-    for coords, target in zip(X_pca, y_data):
-        points.append({
-            "x": float(coords[0]),
-            "y": float(coords[1]),
-            "z": float(coords[2]),
-            "species": CLASS_NAMES[target]
-        })
-        
-    return jsonify({
-        "points": points,
-        "userPoint": {
-            "x": float(user_pca[0]),
-            "y": float(user_pca[1]),
-            "z": float(user_pca[2])
-        }
-    })
+@app.route("/pca_static", methods=["GET"])
+def get_pca_static():
+    return jsonify({"points": STATIC_PCA_POINTS})
 
 
 @app.route("/retrain", methods=["POST"])
