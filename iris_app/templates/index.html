@@ -30,8 +30,8 @@
       };
     </script>
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2.0" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3.0" />
   </head>
   <body class="bg-[var(--bg)] text-[var(--text)] antialiased transition-colors duration-300 flex flex-col min-h-screen relative overflow-x-hidden">
     
@@ -79,109 +79,110 @@
       </div>
     </header>
 
-    <!-- Main Workspace Container (Flows Horizontally) -->
+    <!-- Main Workspace Container -->
     <main class="flex-grow max-w-[1380px] w-full mx-auto p-6 md:p-8 space-y-8 relative z-10">
       
       <!-- TAB 1: EXPLORER WORKSPACE -->
       <div id="tab-explorer" class="tab-content space-y-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- SECTION 1: THE THREE FEATURES (ALIGNED HORIZONTALLY) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           
-          <!-- Column 1: Feature Sliders & Presets -->
-          <div class="lg:col-span-4 space-y-6">
-            
-            <!-- Presets selection -->
-            <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud">
+          <!-- Feature 1: Presets Selection -->
+          <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col justify-between min-h-[220px]">
+            <div>
               <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-3 font-mono">Species Presets</h3>
-              <div class="grid grid-cols-3 gap-2 font-mono">
-                <button onclick="applyPreset('setosa')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Setosa</button>
-                <button onclick="applyPreset('versicolor')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Versicolor</button>
-                <button onclick="applyPreset('virginica')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Virginica</button>
-              </div>
+              <p class="text-[10px] text-[var(--muted)] mb-4 leading-relaxed font-mono">Select a botanical reference preset to load model coordinate templates instantly.</p>
             </div>
-
-            <!-- Sliders -->
-            <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud space-y-5">
-              <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] font-mono">Morphological Features</h3>
-              
-              <div class="space-y-4">
-                <div>
-                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
-                    <span>Sepal Length</span>
-                    <span id="label-sepal-length" class="text-purple-600 font-extrabold">5.1 cm</span>
-                  </div>
-                  <input type="range" id="slide-sepal-length" min="4.3" max="7.9" step="0.1" value="5.1" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
-                </div>
-                <div>
-                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
-                    <span>Sepal Width</span>
-                    <span id="label-sepal-width" class="text-purple-600 font-extrabold">3.5 cm</span>
-                  </div>
-                  <input type="range" id="slide-sepal-width" min="2.0" max="4.4" step="0.1" value="3.5" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
-                </div>
-                <div>
-                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
-                    <span>Petal Length</span>
-                    <span id="label-petal-length" class="text-purple-600 font-extrabold">1.4 cm</span>
-                  </div>
-                  <input type="range" id="slide-petal-length" min="1.0" max="6.9" step="0.1" value="1.4" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
-                </div>
-                <div>
-                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
-                    <span>Petal Width</span>
-                    <span id="label-petal-width" class="text-purple-600 font-extrabold">0.2 cm</span>
-                  </div>
-                  <input type="range" id="slide-petal-width" min="0.1" max="2.5" step="0.1" value="0.2" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
-                </div>
-              </div>
+            <div class="grid grid-cols-3 gap-2 font-mono">
+              <button onclick="applyPreset('setosa')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Setosa</button>
+              <button onclick="applyPreset('versicolor')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Versicolor</button>
+              <button onclick="applyPreset('virginica')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Virginica</button>
             </div>
+          </div>
 
-            <!-- Prediction card -->
-            <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud space-y-4">
-              <div class="flex justify-between items-start font-mono">
-                <div>
-                  <p class="text-[9px] uppercase font-bold tracking-widest text-[var(--muted)]">Model Classification</p>
-                  <h4 id="predictionName" class="text-lg font-black mt-1 text-[var(--text)] tracking-wider">IRIS SETOSA</h4>
-                  <p id="predictionScientific" class="text-[10px] text-[var(--muted)] italic mt-0.5">Iris setosa</p>
+          <!-- Feature 2: Morphological Feature Sliders -->
+          <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col justify-between min-h-[220px]">
+            <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-3 font-mono">Morphological Features</h3>
+            <div class="space-y-3 flex-grow flex flex-col justify-center">
+              <div>
+                <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-0.5 text-[var(--muted)] font-mono">
+                  <span>Sepal Length</span>
+                  <span id="label-sepal-length" class="text-purple-600 font-extrabold">5.1 cm</span>
                 </div>
+                <input type="range" id="slide-sepal-length" min="4.3" max="7.9" step="0.1" value="5.1" class="w-full h-1 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
               </div>
-
-              <!-- Static Flower Image Preview -->
-              <div class="rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--bg)] h-32 relative shadow-inner">
-                <img id="staticFlowerImg" src="https://upload.wikimedia.org/wikipedia/commons/2/27/Blue_Flag%2C_Iris_setosa.jpg" alt="Iris species" class="w-full h-full object-cover">
-              </div>
-              
-              <div class="bg-[var(--bg)] rounded-xl p-3 border border-[var(--border)] text-xs text-[var(--muted)] leading-relaxed font-mono">
-                <p id="predictionSummary">Loading prediction summary...</p>
-              </div>
-
-              <div class="grid grid-cols-2 gap-3 text-center font-mono">
-                <div class="bg-[var(--bg)] rounded-xl p-2.5 border border-[var(--border)]">
-                  <p class="text-[8px] text-[var(--muted)] uppercase font-bold tracking-wider">Confidence</p>
-                  <p id="confidenceValue" class="text-base font-extrabold text-purple-600 mt-0.5">—</p>
+              <div>
+                <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-0.5 text-[var(--muted)] font-mono">
+                  <span>Sepal Width</span>
+                  <span id="label-sepal-width" class="text-purple-600 font-extrabold">3.5 cm</span>
                 </div>
-                <div class="bg-[var(--bg)] rounded-xl p-2.5 border border-[var(--border)]">
-                  <p class="text-[8px] text-[var(--muted)] uppercase font-bold tracking-wider">Inference</p>
-                  <p id="inferenceValue" class="text-base font-extrabold text-[var(--text)] mt-0.5">—</p>
+                <input type="range" id="slide-sepal-width" min="2.0" max="4.4" step="0.1" value="3.5" class="w-full h-1 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
+              </div>
+              <div>
+                <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-0.5 text-[var(--muted)] font-mono">
+                  <span>Petal Length</span>
+                  <span id="label-petal-length" class="text-purple-600 font-extrabold">1.4 cm</span>
                 </div>
+                <input type="range" id="slide-petal-length" min="1.0" max="6.9" step="0.1" value="1.4" class="w-full h-1 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
+              </div>
+              <div>
+                <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-0.5 text-[var(--muted)] font-mono">
+                  <span>Petal Width</span>
+                  <span id="label-petal-width" class="text-purple-600 font-extrabold">0.2 cm</span>
+                </div>
+                <input type="range" id="slide-petal-width" min="0.1" max="2.5" step="0.1" value="0.2" class="w-full h-1 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
               </div>
             </div>
           </div>
 
-          <!-- Column 2: Animated Neural network -->
-          <div class="lg:col-span-5 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col">
+          <!-- Feature 3: Prediction Output Card -->
+          <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col justify-between min-h-[220px]">
+            <div class="flex justify-between items-start font-mono mb-2">
+              <div>
+                <p class="text-[9px] uppercase font-bold tracking-widest text-[var(--muted)]">Model Classification</p>
+                <div class="flex items-baseline gap-2">
+                  <h4 id="predictionName" class="text-base font-black text-[var(--text)] tracking-wider">IRIS SETOSA</h4>
+                  <p id="predictionScientific" class="text-[9px] text-[var(--muted)] italic">Iris setosa</p>
+                </div>
+              </div>
+              <div class="bg-[var(--bg)] rounded-lg px-2.5 py-1 border border-[var(--border)] text-center font-bold">
+                <span id="confidenceValue" class="text-xs font-black text-purple-600 font-mono">—</span>
+              </div>
+            </div>
+
+            <!-- Horizontal flower & description -->
+            <div class="flex gap-4 items-center">
+              <div class="rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--bg)] w-24 h-24 shrink-0 shadow-inner">
+                <img id="staticFlowerImg" src="https://upload.wikimedia.org/wikipedia/commons/2/27/Blue_Flag%2C_Iris_setosa.jpg" alt="Iris species" class="w-full h-full object-cover">
+              </div>
+              <div class="bg-[var(--bg)] rounded-xl p-3 border border-[var(--border)] text-[10px] text-[var(--muted)] leading-relaxed font-mono flex-grow h-24 overflow-y-auto">
+                <p id="predictionSummary">Loading prediction summary...</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SECTION 2: VISUALIZATION DECK (Neural Net SVG & 3D PCA) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
+          
+          <!-- Neural Network Signal Propagation -->
+          <div class="lg:col-span-7 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col">
             <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-4 font-mono">Neural Signal Propagation</h3>
-            <div class="flex-grow flex items-center justify-center min-h-[360px] relative bg-[var(--bg)] rounded-xl border border-[var(--border)] overflow-hidden">
+            <div class="flex-grow flex items-center justify-center min-h-[400px] relative bg-[var(--bg)] rounded-xl border border-[var(--border)] overflow-hidden">
               <svg id="networkSvg" class="absolute inset-0 w-full h-full p-6"></svg>
             </div>
           </div>
 
-          <!-- Column 3: 3D PCA Space -->
-          <div class="lg:col-span-3 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col">
+          <!-- 3D PCA Feature Cluster -->
+          <div class="lg:col-span-5 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col">
             <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-4 font-mono">3D PCA Feature Cluster</h3>
-            <div id="pcaDiv" class="flex-grow min-h-[300px] rounded-xl overflow-hidden border border-[var(--border)] bg-[#070b13]"></div>
+            <div id="pcaDiv" class="flex-grow min-h-[400px] rounded-xl overflow-hidden border border-[var(--border)] bg-[#070b13]"></div>
           </div>
-          
+
         </div>
+
       </div>
 
       <!-- TAB 2: ARCHITECTURE LAB (RETRAINING) -->
@@ -308,7 +309,7 @@
     <!-- Footer -->
     <footer class="border-t border-[var(--border)] bg-[var(--panel)]/80 backdrop-blur-md py-6 text-center text-xs text-[var(--muted)] shrink-0 mt-12 relative z-10 font-mono shadow-inner">
       <div class="mx-auto max-w-[1380px] px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="text-[10px] uppercase font-bold tracking-wider">Iris Neural Explorer • Version 2.0</div>
+        <div class="text-[10px] uppercase font-bold tracking-wider">Iris Neural Explorer • Version 3.0</div>
         <div class="flex gap-6 font-semibold uppercase text-[10px] tracking-wider">
           <a href="https://github.com" target="_blank" class="hover:underline">GitHub</a>
           <a href="https://linkedin.com" target="_blank" class="hover:underline">LinkedIn</a>
@@ -317,6 +318,6 @@
     </footer>
 
     <!-- Script loaded with version cache buster -->
-    <script src="{{ url_for('static', filename='script.js') }}?v=2.0"></script>
+    <script src="{{ url_for('static', filename='script.js') }}?v=3.0"></script>
   </body>
 </html>
