@@ -383,7 +383,7 @@ function drawPcaPlot(data) {
   };
 
   const plotData = [speciesData.setosa, speciesData.versicolor, speciesData.virginica, userTrace];
-  Plotly.newPlot('pcaDiv', plotData, layout, { displayModeBar: false });
+  Plotly.react('pcaDiv', plotData, layout, { displayModeBar: false });
 }
 
 // Live retraining simulator

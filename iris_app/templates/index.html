@@ -31,293 +31,292 @@
     </script>
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2.0" />
   </head>
-  <body class="bg-[var(--bg)] text-[var(--text)] antialiased transition-colors duration-300 flex flex-col min-h-screen">
+  <body class="bg-[var(--bg)] text-[var(--text)] antialiased transition-colors duration-300 flex flex-col min-h-screen relative overflow-x-hidden">
     
-    <div class="flex flex-grow overflow-hidden">
-      <!-- Futuristic Glass Sidebar -->
-      <aside class="w-64 border-r border-[var(--border)] bg-[var(--panel)] flex flex-col justify-between shrink-0 relative z-20">
+    <!-- Cyber Grid background lines -->
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-[0.15] z-0 pointer-events-none"></div>
+
+    <!-- Futuristic Horizontal Top Navigation Header -->
+    <header class="h-16 border-b border-[var(--border)] bg-[var(--panel)]/80 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-30 shrink-0 font-mono shadow-sm">
+      <div class="flex items-center gap-3">
+        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 text-white font-extrabold text-xs shadow-purpleGlow font-black">ANN</span>
         <div>
-          <div class="px-6 py-6 border-b border-[var(--border)] flex items-center gap-3">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 text-white font-extrabold text-xs shadow-purpleGlow font-mono font-black">ANN</span>
-            <div>
-              <h1 class="text-xs font-black tracking-widest text-[var(--text)] uppercase font-mono">Iris Explorer</h1>
-              <p class="text-[9px] text-[var(--muted)] uppercase font-bold tracking-wider font-mono">Neural sandbox</p>
+          <h1 class="text-xs font-black tracking-widest text-[var(--text)] uppercase">Iris Explorer</h1>
+          <p class="text-[9px] text-[var(--muted)] uppercase font-bold tracking-wider">Deep Learning Sandbox</p>
+        </div>
+      </div>
+
+      <!-- Horizontal Tabs Menu -->
+      <nav class="flex items-center gap-2 bg-[var(--bg)]/80 border border-[var(--border)] p-1 rounded-xl shadow-inner">
+        <button onclick="switchTab('explorer')" id="nav-explorer" class="nav-btn active px-4 py-2 rounded-lg text-[9px] uppercase tracking-widest font-black transition">
+          🌿 Workspace
+        </button>
+        <button onclick="switchTab('training')" id="nav-training" class="nav-btn px-4 py-2 rounded-lg text-[9px] uppercase tracking-widest font-black transition">
+          ⚙️ Architecture
+        </button>
+        <button onclick="switchTab('reference')" id="nav-reference" class="nav-btn px-4 py-2 rounded-lg text-[9px] uppercase tracking-widest font-black transition">
+          📚 Encyclopedia
+        </button>
+      </nav>
+
+      <!-- User profiles / Controls -->
+      <div class="flex items-center gap-4">
+        <button id="themeToggle" class="rounded-lg border border-[var(--border)] p-2 text-[var(--muted)] hover:text-[var(--text)] transition bg-[var(--panel)] shadow-sm">
+          <span class="text-xs font-bold">☼</span>
+        </button>
+        
+        <div class="flex items-center gap-3 border-l border-[var(--border)] pl-4">
+          <div class="text-[9px] text-[var(--muted)] text-right uppercase tracking-wider hidden sm:block">
+            <p class="font-bold text-[var(--text)]">Researcher</p>
+            <p>Atharv Raval</p>
+          </div>
+          <div class="h-8 w-8 rounded-full bg-purple-100 dark:bg-purple-950 border border-purple-200 dark:border-purple-900/60 flex items-center justify-center font-bold text-purple-600 text-xs">
+            AR
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Container (Flows Horizontally) -->
+    <main class="flex-grow max-w-[1380px] w-full mx-auto p-6 md:p-8 space-y-8 relative z-10">
+      
+      <!-- TAB 1: EXPLORER WORKSPACE -->
+      <div id="tab-explorer" class="tab-content space-y-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          <!-- Column 1: Feature Sliders & Presets -->
+          <div class="lg:col-span-4 space-y-6">
+            
+            <!-- Presets selection -->
+            <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud">
+              <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-3 font-mono">Species Presets</h3>
+              <div class="grid grid-cols-3 gap-2 font-mono">
+                <button onclick="applyPreset('setosa')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Setosa</button>
+                <button onclick="applyPreset('versicolor')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Versicolor</button>
+                <button onclick="applyPreset('virginica')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Virginica</button>
+              </div>
             </div>
+
+            <!-- Sliders -->
+            <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud space-y-5">
+              <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] font-mono">Morphological Features</h3>
+              
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
+                    <span>Sepal Length</span>
+                    <span id="label-sepal-length" class="text-purple-600 font-extrabold">5.1 cm</span>
+                  </div>
+                  <input type="range" id="slide-sepal-length" min="4.3" max="7.9" step="0.1" value="5.1" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
+                </div>
+                <div>
+                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
+                    <span>Sepal Width</span>
+                    <span id="label-sepal-width" class="text-purple-600 font-extrabold">3.5 cm</span>
+                  </div>
+                  <input type="range" id="slide-sepal-width" min="2.0" max="4.4" step="0.1" value="3.5" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
+                </div>
+                <div>
+                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
+                    <span>Petal Length</span>
+                    <span id="label-petal-length" class="text-purple-600 font-extrabold">1.4 cm</span>
+                  </div>
+                  <input type="range" id="slide-petal-length" min="1.0" max="6.9" step="0.1" value="1.4" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
+                </div>
+                <div>
+                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
+                    <span>Petal Width</span>
+                    <span id="label-petal-width" class="text-purple-600 font-extrabold">0.2 cm</span>
+                  </div>
+                  <input type="range" id="slide-petal-width" min="0.1" max="2.5" step="0.1" value="0.2" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
+                </div>
+              </div>
+            </div>
+
+            <!-- Prediction card -->
+            <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud space-y-4">
+              <div class="flex justify-between items-start font-mono">
+                <div>
+                  <p class="text-[9px] uppercase font-bold tracking-widest text-[var(--muted)]">Model Classification</p>
+                  <h4 id="predictionName" class="text-lg font-black mt-1 text-[var(--text)] tracking-wider">IRIS SETOSA</h4>
+                  <p id="predictionScientific" class="text-[10px] text-[var(--muted)] italic mt-0.5">Iris setosa</p>
+                </div>
+              </div>
+
+              <!-- Static Flower Image Preview -->
+              <div class="rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--bg)] h-32 relative shadow-inner">
+                <img id="staticFlowerImg" src="https://upload.wikimedia.org/wikipedia/commons/2/27/Blue_Flag%2C_Iris_setosa.jpg" alt="Iris species" class="w-full h-full object-cover">
+              </div>
+              
+              <div class="bg-[var(--bg)] rounded-xl p-3 border border-[var(--border)] text-xs text-[var(--muted)] leading-relaxed font-mono">
+                <p id="predictionSummary">Loading prediction summary...</p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 text-center font-mono">
+                <div class="bg-[var(--bg)] rounded-xl p-2.5 border border-[var(--border)]">
+                  <p class="text-[8px] text-[var(--muted)] uppercase font-bold tracking-wider">Confidence</p>
+                  <p id="confidenceValue" class="text-base font-extrabold text-purple-600 mt-0.5">—</p>
+                </div>
+                <div class="bg-[var(--bg)] rounded-xl p-2.5 border border-[var(--border)]">
+                  <p class="text-[8px] text-[var(--muted)] uppercase font-bold tracking-wider">Inference</p>
+                  <p id="inferenceValue" class="text-base font-extrabold text-[var(--text)] mt-0.5">—</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Animated Neural network -->
+          <div class="lg:col-span-5 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col">
+            <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-4 font-mono">Neural Signal Propagation</h3>
+            <div class="flex-grow flex items-center justify-center min-h-[360px] relative bg-[var(--bg)] rounded-xl border border-[var(--border)] overflow-hidden">
+              <svg id="networkSvg" class="absolute inset-0 w-full h-full p-6"></svg>
+            </div>
+          </div>
+
+          <!-- Column 3: 3D PCA Space -->
+          <div class="lg:col-span-3 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col">
+            <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-4 font-mono">3D PCA Feature Cluster</h3>
+            <div id="pcaDiv" class="flex-grow min-h-[300px] rounded-xl overflow-hidden border border-[var(--border)] bg-[#070b13]"></div>
           </div>
           
-          <nav class="px-4 py-6 space-y-2">
-            <button onclick="switchTab('explorer')" id="nav-explorer" class="nav-btn active flex items-center gap-3 w-full px-4 py-3 rounded-xl text-[10px] uppercase tracking-widest font-black transition font-mono">
-              🌿 Workspace
-            </button>
-            <button onclick="switchTab('training')" id="nav-training" class="nav-btn flex items-center gap-3 w-full px-4 py-3 rounded-xl text-[10px] uppercase tracking-widest font-black transition font-mono">
-              ⚙️ Architecture
-            </button>
-            <button onclick="switchTab('reference')" id="nav-reference" class="nav-btn flex items-center gap-3 w-full px-4 py-3 rounded-xl text-[10px] uppercase tracking-widest font-black transition font-mono">
-              📚 Encyclopedia
-            </button>
-          </nav>
         </div>
+      </div>
 
-        <div class="p-4 border-t border-[var(--border)] flex items-center justify-between font-mono">
-          <div class="flex items-center gap-2">
-            <span class="h-2 w-2 rounded-full bg-purple-500 animate-pulse shadow-purpleGlow"></span>
-            <span id="model-status" class="text-[9px] uppercase font-bold tracking-wider text-[var(--muted)]">Model Loaded</span>
-          </div>
-          <button id="themeToggle" class="rounded-lg border border-[var(--border)] p-2 text-[var(--muted)] hover:text-[var(--text)] transition bg-[var(--bg)] shadow-sm">
-            <span class="text-xs font-bold">☼</span>
-          </button>
-        </div>
-      </aside>
-
-      <!-- Main Content Area -->
-      <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <!-- Topbar Header -->
-        <header class="h-16 border-b border-[var(--border)] bg-[var(--panel)]/50 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-10 shrink-0 font-mono shadow-sm">
-          <div>
-            <h2 id="page-title" class="text-xs font-black uppercase tracking-widest text-[var(--text)]">Explorer Workspace</h2>
-          </div>
-          <div class="flex items-center gap-4">
-            <div class="text-[9px] text-[var(--muted)] text-right uppercase tracking-wider">
-              <p class="font-bold text-[var(--text)]">Model Researcher</p>
-              <p>Atharv Raval</p>
-            </div>
-            <div class="h-8 w-8 rounded-full bg-purple-100 dark:bg-purple-950 border border-purple-200 dark:border-purple-900/60 flex items-center justify-center font-bold text-purple-600 text-xs">
-              AR
-            </div>
-          </div>
-        </header>
-
-        <!-- Content Inner -->
-        <div class="flex-grow p-6 md:p-8">
+      <!-- TAB 2: ARCHITECTURE LAB (RETRAINING) -->
+      <div id="tab-training" class="tab-content hidden space-y-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          <!-- TAB 1: EXPLORER WORKSPACE -->
-          <div id="tab-explorer" class="tab-content space-y-8">
-            <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+          <!-- Left: Hyperparameters config -->
+          <div class="lg:col-span-4 space-y-6">
+            <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6 shadow-hud space-y-5">
+              <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-2 font-mono">Retraining Hyperparameters</h3>
               
-              <!-- Column 1: Feature Sliders & Presets -->
-              <div class="xl:col-span-4 space-y-6">
-                
-                <!-- Presets selection -->
-                <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud">
-                  <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-3 font-mono">Species Presets</h3>
-                  <div class="grid grid-cols-3 gap-2 font-mono">
-                    <button onclick="applyPreset('setosa')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Setosa</button>
-                    <button onclick="applyPreset('versicolor')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Versicolor</button>
-                    <button onclick="applyPreset('virginica')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Virginica</button>
-                  </div>
+              <div>
+                <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
+                  <span>Epochs</span>
+                  <span id="label-epochs" class="text-purple-600 font-extrabold">20</span>
                 </div>
+                <input type="range" id="slide-epochs" min="5" max="100" value="20" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
+              </div>
 
-                <!-- Sliders -->
-                <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud space-y-5">
-                  <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] font-mono">Morphological Features</h3>
-                  
-                  <div class="space-y-4">
-                    <div>
-                      <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
-                        <span>Sepal Length</span>
-                        <span id="label-sepal-length" class="text-purple-600 font-extrabold">5.1 cm</span>
-                      </div>
-                      <input type="range" id="slide-sepal-length" min="4.3" max="7.9" step="0.1" value="5.1" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
-                    </div>
-                    <div>
-                      <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
-                        <span>Sepal Width</span>
-                        <span id="label-sepal-width" class="text-purple-600 font-extrabold">3.5 cm</span>
-                      </div>
-                      <input type="range" id="slide-sepal-width" min="2.0" max="4.4" step="0.1" value="3.5" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
-                    </div>
-                    <div>
-                      <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
-                        <span>Petal Length</span>
-                        <span id="label-petal-length" class="text-purple-600 font-extrabold">1.4 cm</span>
-                      </div>
-                      <input type="range" id="slide-petal-length" min="1.0" max="6.9" step="0.1" value="1.4" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
-                    </div>
-                    <div>
-                      <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
-                        <span>Petal Width</span>
-                        <span id="label-petal-width" class="text-purple-600 font-extrabold">0.2 cm</span>
-                      </div>
-                      <input type="range" id="slide-petal-width" min="0.1" max="2.5" step="0.1" value="0.2" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
-                    </div>
-                  </div>
+              <div>
+                <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
+                  <span>Learning Rate</span>
+                  <span id="label-lr" class="text-purple-600 font-extrabold">0.001</span>
                 </div>
+                <input type="range" id="slide-lr" min="0.0001" max="0.05" step="0.0005" value="0.001" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
+              </div>
 
-                <!-- Prediction card -->
-                <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud space-y-4">
-                  <div class="flex justify-between items-start font-mono">
-                    <div>
-                      <p class="text-[9px] uppercase font-bold tracking-widest text-[var(--muted)]">Model Classification</p>
-                      <h4 id="predictionName" class="text-lg font-black mt-1 text-[var(--text)] tracking-wider">IRIS SETOSA</h4>
-                      <p id="predictionScientific" class="text-[10px] text-[var(--muted)] italic mt-0.5">Iris setosa</p>
-                    </div>
+              <div class="space-y-3 font-mono">
+                <span class="block text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)]">Layer Configuration</span>
+                <div class="space-y-2">
+                  <div class="flex gap-3 items-center">
+                    <span class="text-[10px] font-bold w-16 text-[var(--muted)]">Hidden 1:</span>
+                    <input type="number" id="units-l1" value="256" class="w-20 px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text)] focus:outline-none focus:border-purple-500 shadow-sm font-semibold">
+                    <span class="text-[9px] uppercase text-[var(--muted)] font-bold">neurons</span>
                   </div>
-
-                  <!-- Static Flower Image Preview -->
-                  <div class="rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--bg)] h-32 relative shadow-inner">
-                    <img id="staticFlowerImg" src="https://upload.wikimedia.org/wikipedia/commons/2/27/Blue_Flag%2C_Iris_setosa.jpg" alt="Iris species" class="w-full h-full object-cover">
+                  <div class="flex gap-3 items-center">
+                    <span class="text-[10px] font-bold w-16 text-[var(--muted)]">Hidden 2:</span>
+                    <input type="number" id="units-l2" value="128" class="w-20 px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text)] focus:outline-none focus:border-purple-500 shadow-sm font-semibold">
+                    <span class="text-[9px] uppercase text-[var(--muted)] font-bold">neurons</span>
                   </div>
-                  
-                  <div class="bg-[var(--bg)] rounded-xl p-3 border border-[var(--border)] text-xs text-[var(--muted)] leading-relaxed font-mono">
-                    <p id="predictionSummary">Loading prediction summary...</p>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-3 text-center font-mono">
-                    <div class="bg-[var(--bg)] rounded-xl p-2.5 border border-[var(--border)]">
-                      <p class="text-[8px] text-[var(--muted)] uppercase font-bold tracking-wider">Confidence</p>
-                      <p id="confidenceValue" class="text-base font-extrabold text-purple-600 mt-0.5">—</p>
-                    </div>
-                    <div class="bg-[var(--bg)] rounded-xl p-2.5 border border-[var(--border)]">
-                      <p class="text-[8px] text-[var(--muted)] uppercase font-bold tracking-wider">Inference</p>
-                      <p id="inferenceValue" class="text-base font-extrabold text-[var(--text)] mt-0.5">—</p>
-                    </div>
+                  <div class="flex gap-3 items-center">
+                    <span class="text-[10px] font-bold w-16 text-[var(--muted)]">Hidden 3:</span>
+                    <input type="number" id="units-l3" value="64" class="w-20 px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text)] focus:outline-none focus:border-purple-500 shadow-sm font-semibold">
+                    <span class="text-[9px] uppercase text-[var(--muted)] font-bold">neurons</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Column 2: Animated Neural network -->
-              <div class="xl:col-span-5 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col">
-                <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-4 font-mono">Neural Signal Propagation</h3>
-                <div class="flex-grow flex items-center justify-center min-h-[360px] relative bg-[var(--bg)] rounded-xl border border-[var(--border)] overflow-hidden">
-                  <svg id="networkSvg" class="absolute inset-0 w-full h-full p-6"></svg>
-                </div>
-              </div>
-
-              <!-- Column 3: 3D PCA Space -->
-              <div class="xl:col-span-3 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col">
-                <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-4 font-mono">3D PCA Feature Cluster</h3>
-                <div id="pcaDiv" class="flex-grow min-h-[300px] rounded-xl overflow-hidden border border-[var(--border)] bg-[#070b13]"></div>
-              </div>
-              
+              <button id="retrainButton" class="w-full rounded-xl bg-gradient-to-r from-purple-600 to-indigo-500 text-white font-extrabold py-3.5 text-xs uppercase tracking-widest hover:from-purple-700 hover:to-indigo-600 transition shadow-purpleGlow font-mono">
+                Reconstruct & Retrain Model
+              </button>
+              <p id="trainMessage" class="text-[9px] text-[var(--muted)] text-center uppercase tracking-widest font-extrabold font-mono">Re-compilation runs in the Python environment.</p>
             </div>
           </div>
 
-          <!-- TAB 2: ARCHITECTURE LAB (RETRAINING) -->
-          <div id="tab-training" class="tab-content hidden space-y-8">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              
-              <!-- Left: Hyperparameters config -->
-              <div class="lg:col-span-4 space-y-6">
-                <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6 shadow-hud space-y-5">
-                  <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-2 font-mono">Retraining Hyperparameters</h3>
-                  
-                  <div>
-                    <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
-                      <span>Epochs</span>
-                      <span id="label-epochs" class="text-purple-600 font-extrabold">20</span>
-                    </div>
-                    <input type="range" id="slide-epochs" min="5" max="100" value="20" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
-                  </div>
-
-                  <div>
-                    <div class="flex justify-between text-[9px] font-bold uppercase tracking-wider mb-1 text-[var(--muted)] font-mono">
-                      <span>Learning Rate</span>
-                      <span id="label-lr" class="text-purple-600 font-extrabold">0.001</span>
-                    </div>
-                    <input type="range" id="slide-lr" min="0.0001" max="0.05" step="0.0005" value="0.001" class="w-full h-1.5 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-purple-600">
-                  </div>
-
-                  <div class="space-y-3 font-mono">
-                    <span class="block text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)]">Layer Configuration</span>
-                    <div class="space-y-2">
-                      <div class="flex gap-3 items-center">
-                        <span class="text-[10px] font-bold w-16 text-[var(--muted)]">Hidden 1:</span>
-                        <input type="number" id="units-l1" value="256" class="w-20 px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text)] focus:outline-none focus:border-purple-500 shadow-sm font-semibold">
-                        <span class="text-[9px] uppercase text-[var(--muted)] font-bold">neurons</span>
-                      </div>
-                      <div class="flex gap-3 items-center">
-                        <span class="text-[10px] font-bold w-16 text-[var(--muted)]">Hidden 2:</span>
-                        <input type="number" id="units-l2" value="128" class="w-20 px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text)] focus:outline-none focus:border-purple-500 shadow-sm font-semibold">
-                        <span class="text-[9px] uppercase text-[var(--muted)] font-bold">neurons</span>
-                      </div>
-                      <div class="flex gap-3 items-center">
-                        <span class="text-[10px] font-bold w-16 text-[var(--muted)]">Hidden 3:</span>
-                        <input type="number" id="units-l3" value="64" class="w-20 px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text)] focus:outline-none focus:border-purple-500 shadow-sm font-semibold">
-                        <span class="text-[9px] uppercase text-[var(--muted)] font-bold">neurons</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <button id="retrainButton" class="w-full rounded-xl bg-gradient-to-r from-purple-600 to-indigo-500 text-white font-extrabold py-3.5 text-xs uppercase tracking-widest hover:from-purple-700 hover:to-indigo-600 transition shadow-purpleGlow font-mono">
-                    Reconstruct & Retrain Model
-                  </button>
-                  <p id="trainMessage" class="text-[9px] text-[var(--muted)] text-center uppercase tracking-widest font-extrabold font-mono">Re-compilation runs in the Python environment.</p>
-                </div>
-              </div>
-
-              <!-- Right: Training graphs -->
-              <div class="lg:col-span-8 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6 shadow-hud flex flex-col">
-                <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-4 font-mono">On-the-fly Training Progress</h3>
-                <div class="flex-grow min-h-[300px]">
-                  <canvas id="retrainChart"></canvas>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- TAB 3: REFERENCE & HISTORY -->
-          <div id="tab-reference" class="tab-content hidden space-y-8">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              <!-- Encyclopedia -->
-              <div class="lg:col-span-7 space-y-6">
-                <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6 shadow-hud">
-                  <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-4 font-mono">Botanical Profiles</h3>
-                  
-                  <div id="flowerCard" class="bg-[var(--bg)] rounded-xl p-5 border border-[var(--border)]">
-                    <div class="flex flex-col md:flex-row gap-6">
-                      <div class="md:w-1/3 flex items-center justify-center rounded-xl bg-[var(--panel)] border border-[var(--border)] p-2 shadow-sm">
-                        <img id="encyclopediaImg" src="https://gardenerspath.com/wp-content/uploads/2023/03/Purple-Iris-Flower-Growing-in-the-Garden.jpg" alt="Botanical species" class="h-40 w-full rounded-lg object-cover" />
-                      </div>
-                      <div class="flex-grow space-y-4">
-                        <div class="font-mono">
-                          <h4 id="encyclopediaName" class="text-base font-black text-[var(--text)] uppercase tracking-wider">Iris Species Profile</h4>
-                          <p id="encyclopediaScientific" class="text-[10px] text-[var(--muted)] italic mt-0.5">Awaiting prediction...</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 text-xs font-mono">
-                          <div>
-                            <p class="font-bold text-[var(--muted)] text-[9px] uppercase tracking-wider">Regions</p>
-                            <p id="encyclopediaRegions" class="text-[var(--text)] mt-0.5 font-semibold">—</p>
-                          </div>
-                          <div>
-                            <p class="font-bold text-[var(--muted)] text-[9px] uppercase tracking-wider">Habitat</p>
-                            <p id="encyclopediaHabitat" class="text-[var(--text)] mt-0.5 font-semibold">—</p>
-                          </div>
-                          <div>
-                            <p class="font-bold text-[var(--muted)] text-[9px] uppercase tracking-wider">Family</p>
-                            <p id="encyclopediaFamily" class="text-[var(--text)] mt-0.5 font-semibold">—</p>
-                          </div>
-                          <div>
-                            <p class="font-bold text-[var(--muted)] text-[9px] uppercase tracking-wider">Genus</p>
-                            <p id="encyclopediaGenus" class="text-[var(--text)] mt-0.5 font-semibold">—</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- History Logs -->
-              <div class="lg:col-span-5 space-y-6">
-                <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6 shadow-hud">
-                  <div class="flex justify-between items-center mb-4 font-mono">
-                    <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)]">Inference Logs</h3>
-                    <button id="clearHistory" class="text-[9px] text-red-500 font-extrabold uppercase tracking-widest hover:underline">Clear Logs</button>
-                  </div>
-                  <div id="historyList" class="space-y-3 max-h-96 overflow-y-auto pr-2"></div>
-                </div>
-              </div>
+          <!-- Right: Training graphs -->
+          <div class="lg:col-span-8 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6 shadow-hud flex flex-col">
+            <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-4 font-mono">On-the-fly Training Progress</h3>
+            <div class="flex-grow min-h-[300px]">
+              <canvas id="retrainChart"></canvas>
             </div>
           </div>
 
         </div>
-      </main>
-    </div>
+      </div>
+
+      <!-- TAB 3: REFERENCE & HISTORY -->
+      <div id="tab-reference" class="tab-content hidden space-y-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- Encyclopedia -->
+          <div class="lg:col-span-7 space-y-6">
+            <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6 shadow-hud">
+              <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-4 font-mono">Botanical Profiles</h3>
+              
+              <div id="flowerCard" class="bg-[var(--bg)] rounded-xl p-5 border border-[var(--border)]">
+                <div class="flex flex-col md:flex-row gap-6">
+                  <div class="md:w-1/3 flex items-center justify-center rounded-xl bg-[var(--panel)] border border-[var(--border)] p-2 shadow-sm">
+                    <img id="encyclopediaImg" src="https://gardenerspath.com/wp-content/uploads/2023/03/Purple-Iris-Flower-Growing-in-the-Garden.jpg" alt="Botanical species" class="h-40 w-full rounded-lg object-cover" />
+                  </div>
+                  <div class="flex-grow space-y-4">
+                    <div class="font-mono">
+                      <h4 id="encyclopediaName" class="text-base font-black text-[var(--text)] uppercase tracking-wider">Iris Species Profile</h4>
+                      <p id="encyclopediaScientific" class="text-[10px] text-[var(--muted)] italic mt-0.5">Awaiting prediction...</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-xs font-mono">
+                      <div>
+                        <p class="font-bold text-[var(--muted)] text-[9px] uppercase tracking-wider">Regions</p>
+                        <p id="encyclopediaRegions" class="text-[var(--text)] mt-0.5 font-semibold">—</p>
+                      </div>
+                      <div>
+                        <p class="font-bold text-[var(--muted)] text-[9px] uppercase tracking-wider">Habitat</p>
+                        <p id="encyclopediaHabitat" class="text-[var(--text)] mt-0.5 font-semibold">—</p>
+                      </div>
+                      <div>
+                        <p class="font-bold text-[var(--muted)] text-[9px] uppercase tracking-wider">Family</p>
+                        <p id="encyclopediaFamily" class="text-[var(--text)] mt-0.5 font-semibold">—</p>
+                      </div>
+                      <div>
+                        <p class="font-bold text-[var(--muted)] text-[9px] uppercase tracking-wider">Genus</p>
+                        <p id="encyclopediaGenus" class="text-[var(--text)] mt-0.5 font-semibold">—</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- History Logs -->
+          <div class="lg:col-span-5 space-y-6">
+            <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6 shadow-hud">
+              <div class="flex justify-between items-center mb-4 font-mono">
+                <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)]">Inference Logs</h3>
+                <button id="clearHistory" class="text-[9px] text-red-500 font-extrabold uppercase tracking-widest hover:underline">Clear Logs</button>
+              </div>
+              <div id="historyList" class="space-y-3 max-h-96 overflow-y-auto pr-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[var(--border)] bg-[var(--panel)]/80 backdrop-blur-md py-6 text-center text-xs text-[var(--muted)] shrink-0 mt-12 relative z-10 font-mono shadow-inner">
+      <div class="mx-auto max-w-[1380px] px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="text-[10px] uppercase font-bold tracking-wider">Iris Neural Explorer • Version 2.0</div>
+        <div class="flex gap-6 font-semibold uppercase text-[10px] tracking-wider">
+          <a href="https://github.com" target="_blank" class="hover:underline">GitHub</a>
+          <a href="https://linkedin.com" target="_blank" class="hover:underline">LinkedIn</a>
+        </div>
+      </div>
+    </footer>
 
     <!-- Script loaded with version cache buster -->
-    <script src="{{ url_for('static', filename='script.js') }}?v=1.0"></script>
+    <script src="{{ url_for('static', filename='script.js') }}?v=2.0"></script>
   </body>
 </html>
