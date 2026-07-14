@@ -329,60 +329,72 @@ function updateNeuralSvg(activations) {
 }
 
 function drawPcaPlot(userPoint) {
+  if (typeof Plotly === 'undefined') {
+    console.warn("Plotly is not loaded yet. Skipping 3D PCA plot.");
+    const pcaDiv = document.getElementById('pcaDiv');
+    if (pcaDiv) {
+      pcaDiv.innerHTML = '<div class="text-xs text-[var(--muted)] text-center py-20 font-mono">Loading Plotly engine...</div>';
+    }
+    return;
+  }
   if (!staticPcaPoints || !userPoint) return;
   
-  const speciesData = {
-    setosa: { x: [], y: [], z: [], name: 'Setosa', mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#3b82f6', opacity: 0.6 } },
-    versicolor: { x: [], y: [], z: [], name: 'Versicolor', mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#f59e0b', opacity: 0.6 } },
-    virginica: { x: [], y: [], z: [], name: 'Virginica', mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#10b981', opacity: 0.6 } }
-  };
+  try {
+    const speciesData = {
+      setosa: { x: [], y: [], z: [], name: 'Setosa', mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#3b82f6', opacity: 0.6 } },
+      versicolor: { x: [], y: [], z: [], name: 'Versicolor', mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#f59e0b', opacity: 0.6 } },
+      virginica: { x: [], y: [], z: [], name: 'Virginica', mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#10b981', opacity: 0.6 } }
+    };
 
-  staticPcaPoints.forEach(p => {
-    if (speciesData[p.species]) {
-      speciesData[p.species].x.push(p.x);
-      speciesData[p.species].y.push(p.y);
-      speciesData[p.species].z.push(p.z);
-    }
-  });
+    staticPcaPoints.forEach(p => {
+      if (speciesData[p.species]) {
+        speciesData[p.species].x.push(p.x);
+        speciesData[p.species].y.push(p.y);
+        speciesData[p.species].z.push(p.z);
+      }
+    });
 
-  const userTrace = {
-    x: [userPoint.x],
-    y: [userPoint.y],
-    z: [userPoint.z],
-    name: 'Current Flower',
-    mode: 'markers',
-    type: 'scatter3d',
-    marker: {
-      size: 9,
-      color: '#ec4899', // Pulsing Pink
-      symbol: 'diamond',
-      line: { color: '#ffffff', width: 2 }
-    }
-  };
+    const userTrace = {
+      x: [userPoint.x],
+      y: [userPoint.y],
+      z: [userPoint.z],
+      name: 'Current Flower',
+      mode: 'markers',
+      type: 'scatter3d',
+      marker: {
+        size: 9,
+        color: '#ec4899', // Pulsing Pink
+        symbol: 'diamond',
+        line: { color: '#ffffff', width: 2 }
+      }
+    };
 
-  const isDark = document.body.classList.contains('dark');
-  const paperBg = isDark ? '#060814' : '#ffffff';
-  const gridColor = isDark ? '#222543' : '#e2e8f0';
-  const textColor = isDark ? '#9ca3af' : '#64748b';
+    const isDark = document.body.classList.contains('dark');
+    const paperBg = isDark ? '#060814' : '#ffffff';
+    const gridColor = isDark ? '#222543' : '#e2e8f0';
+    const textColor = isDark ? '#9ca3af' : '#64748b';
 
-  const layout = {
-    autosize: true,
-    margin: { l: 0, r: 0, b: 0, t: 0 },
-    paper_bgcolor: paperBg,
-    scene: {
-      xaxis: { title: '', showgrid: true, gridcolor: gridColor, backgroundcolor: paperBg, showticklabels: false },
-      yaxis: { title: '', showgrid: true, gridcolor: gridColor, backgroundcolor: paperBg, showticklabels: false },
-      zaxis: { title: '', showgrid: true, gridcolor: gridColor, backgroundcolor: paperBg, showticklabels: false }
-    },
-    legend: {
-      x: 0,
-      y: 1,
-      font: { color: textColor, size: 10 }
-    }
-  };
+    const layout = {
+      autosize: true,
+      margin: { l: 0, r: 0, b: 0, t: 0 },
+      paper_bgcolor: paperBg,
+      scene: {
+        xaxis: { title: '', showgrid: true, gridcolor: gridColor, backgroundcolor: paperBg, showticklabels: false },
+        yaxis: { title: '', showgrid: true, gridcolor: gridColor, backgroundcolor: paperBg, showticklabels: false },
+        zaxis: { title: '', showgrid: true, gridcolor: gridColor, backgroundcolor: paperBg, showticklabels: false }
+      },
+      legend: {
+        x: 0,
+        y: 1,
+        font: { color: textColor, size: 10 }
+      }
+    };
 
-  const plotData = [speciesData.setosa, speciesData.versicolor, speciesData.virginica, userTrace];
-  Plotly.react('pcaDiv', plotData, layout, { displayModeBar: false });
+    const plotData = [speciesData.setosa, speciesData.versicolor, speciesData.virginica, userTrace];
+    Plotly.react('pcaDiv', plotData, layout, { displayModeBar: false });
+  } catch (err) {
+    console.error("Plotly render failed:", err);
+  }
 }
 
 // Live retraining simulator
@@ -510,11 +522,17 @@ async function loadStaticPca() {
 }
 
 // Initialization
-window.addEventListener('DOMContentLoaded', async () => {
+window.addEventListener('DOMContentLoaded', () => {
   applyTheme(getThemePreference());
   updateSliderLabels();
   initNeuralSvg();
-  await loadStaticPca();
+  
+  loadStaticPca().then(() => {
+    if (pcaDataCache) {
+      drawPcaPlot(pcaDataCache);
+    }
+  });
+
   fetchPrediction();
   renderHistory();
 });

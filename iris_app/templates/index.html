@@ -29,9 +29,9 @@
         }
       };
     </script>
-    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.24.1/plotly.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=4.0" />
   </head>
   <body class="bg-[var(--bg)] text-[var(--text)] antialiased transition-colors duration-300 flex flex-col min-h-screen relative overflow-x-hidden">
     
@@ -85,23 +85,10 @@
       <!-- TAB 1: EXPLORER WORKSPACE -->
       <div id="tab-explorer" class="tab-content space-y-8">
         
-        <!-- SECTION 1: THE THREE FEATURES (ALIGNED HORIZONTALLY) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
-          <!-- Feature 1: Presets Selection -->
-          <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col justify-between min-h-[220px]">
-            <div>
-              <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-3 font-mono">Species Presets</h3>
-              <p class="text-[10px] text-[var(--muted)] mb-4 leading-relaxed font-mono">Select a botanical reference preset to load model coordinate templates instantly.</p>
-            </div>
-            <div class="grid grid-cols-3 gap-2 font-mono">
-              <button onclick="applyPreset('setosa')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Setosa</button>
-              <button onclick="applyPreset('versicolor')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Versicolor</button>
-              <button onclick="applyPreset('virginica')" class="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black uppercase tracking-wider hover:border-purple-500 transition text-[var(--text)] shadow-sm">Virginica</button>
-            </div>
-          </div>
+        <!-- SECTION 1: THE ACTIVE FEATURES (ALIGNED HORIZONTALLY - PRESETS REMOVED) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-          <!-- Feature 2: Morphological Feature Sliders -->
+          <!-- Feature 1: Morphological Feature Sliders -->
           <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col justify-between min-h-[220px]">
             <h3 class="text-[9px] font-extrabold uppercase tracking-widest text-[var(--muted)] mb-3 font-mono">Morphological Features</h3>
             <div class="space-y-3 flex-grow flex flex-col justify-center">
@@ -136,7 +123,7 @@
             </div>
           </div>
 
-          <!-- Feature 3: Prediction Output Card -->
+          <!-- Feature 2: Prediction Output Card -->
           <div class="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 shadow-hud flex flex-col justify-between min-h-[220px]">
             <div class="flex justify-between items-start font-mono mb-2">
               <div>
@@ -309,7 +296,7 @@
     <!-- Footer -->
     <footer class="border-t border-[var(--border)] bg-[var(--panel)]/80 backdrop-blur-md py-6 text-center text-xs text-[var(--muted)] shrink-0 mt-12 relative z-10 font-mono shadow-inner">
       <div class="mx-auto max-w-[1380px] px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="text-[10px] uppercase font-bold tracking-wider">Iris Neural Explorer • Version 3.0</div>
+        <div class="text-[10px] uppercase font-bold tracking-wider">Iris Neural Explorer • Version 4.0</div>
         <div class="flex gap-6 font-semibold uppercase text-[10px] tracking-wider">
           <a href="https://github.com" target="_blank" class="hover:underline">GitHub</a>
           <a href="https://linkedin.com" target="_blank" class="hover:underline">LinkedIn</a>
@@ -318,6 +305,6 @@
     </footer>
 
     <!-- Script loaded with version cache buster -->
-    <script src="{{ url_for('static', filename='script.js') }}?v=3.0"></script>
+    <script src="{{ url_for('static', filename='script.js') }}?v=4.0"></script>
   </body>
 </html>
