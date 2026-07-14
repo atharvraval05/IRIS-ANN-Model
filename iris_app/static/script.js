@@ -43,7 +43,8 @@ const clearHistoryButton = document.getElementById('clearHistory');
 
 const STORAGE_KEY = 'irisvision-history';
 let retrainChart = null;
-let staticPcaPoints = null;
+let staticPoints = null;
+let pcaChartInstance = null;
 let pcaDataCache = null; // Store user point for theme changes
 
 // Theme Toggle
@@ -61,9 +62,9 @@ function applyTheme(theme) {
 themeToggle.addEventListener('click', () => {
   const nextTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
   applyTheme(nextTheme);
-  // Redraw PCA to match light/dark theme grid styles
+  // Redraw plot to match light/dark theme styles
   if (pcaDataCache) {
-    drawPcaPlot(pcaDataCache);
+    drawDatasetPlot(pcaDataCache);
   }
 });
 
@@ -147,7 +148,7 @@ async function fetchPrediction() {
     updateNeuralSvg(data.activations);
     
     pcaDataCache = data.userPoint;
-    drawPcaPlot(data.userPoint);
+    drawDatasetPlot(data.userPoint);
   } catch (err) {
     console.error(err.message);
   } finally {
@@ -177,8 +178,8 @@ function renderPrediction(data) {
 
   // Add custom local flower image depending on species
   const imgUrls = {
-    setosa: "https://upload.wikimedia.org/wikipedia/commons/2/27/Blue_Flag%2C_Iris_setosa.jpg",
-    versicolor: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Blue_Flag_Iris_Versicolor.jpg",
+    setosa: "https://upload.wikimedia.org/wikipedia/commons/5/56/Kosaciec_szczecinkowaty_Iris_setosa.jpg",
+    versicolor: "https://upload.wikimedia.org/wikipedia/commons/4/41/Iris_versicolor_3.jpg",
     virginica: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Iris_virginica.jpg"
   };
   encyclopediaImg.src = imgUrls[data.predictedClass] || encyclopediaImg.src;
@@ -294,8 +295,8 @@ function updateNeuralSvg(activations) {
           }
         } else {
           // Hidden node activation opacity
-          node.setAttribute('fill', `rgba(168, 85, 247, ${normalized})`);
-          node.style.filter = normalized > 0.6 ? 'drop-shadow(0 0 4px rgba(168, 85, 247, 0.6))' : 'none';
+          node.setAttribute('fill', `rgba(168, 85, 247, ${0.25 + normalized * 0.75})`);
+          node.style.filter = normalized > 0.6 ? 'drop-shadow(0 0 6px rgba(168, 85, 247, 0.85))' : 'none';
         }
       }
     }
@@ -314,12 +315,14 @@ function updateNeuralSvg(activations) {
           const targetNorm = targetVal / maxTarget;
           
           if (targetNorm > 0.15) {
-            line.setAttribute('opacity', `${0.1 + targetNorm * 0.45}`);
+            line.setAttribute('opacity', `${0.25 + targetNorm * 0.55}`);
             line.setAttribute('stroke', 'var(--accent)');
+            line.setAttribute('stroke-width', '1.5');
             line.style.animationDuration = `${5 - targetNorm * 4}s`; // Faster pulse for active layers
           } else {
-            line.setAttribute('opacity', '0.04');
+            line.setAttribute('opacity', '0.12');
             line.setAttribute('stroke', 'var(--border)');
+            line.setAttribute('stroke-width', '0.8');
             line.style.animationDuration = '12s';
           }
         }
@@ -328,73 +331,84 @@ function updateNeuralSvg(activations) {
   }
 }
 
-function drawPcaPlot(userPoint) {
-  if (typeof Plotly === 'undefined') {
-    console.warn("Plotly is not loaded yet. Skipping 3D PCA plot.");
-    const pcaDiv = document.getElementById('pcaDiv');
-    if (pcaDiv) {
-      pcaDiv.innerHTML = '<div class="text-xs text-[var(--muted)] text-center py-20 font-mono">Loading Plotly engine...</div>';
-    }
-    return;
-  }
-  if (!staticPcaPoints || !userPoint) return;
+function drawDatasetPlot(userPoint) {
+  if (!staticPoints || !userPoint) return;
   
-  try {
-    const speciesData = {
-      setosa: { x: [], y: [], z: [], name: 'Setosa', mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#3b82f6', opacity: 0.6 } },
-      versicolor: { x: [], y: [], z: [], name: 'Versicolor', mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#f59e0b', opacity: 0.6 } },
-      virginica: { x: [], y: [], z: [], name: 'Virginica', mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#10b981', opacity: 0.6 } }
-    };
+  const canvas = document.getElementById('pcaChart');
+  if (!canvas) return;
+  
+  if (pcaChartInstance) pcaChartInstance.destroy();
+  
+  const setosaData = [];
+  const versicolorData = [];
+  const virginicaData = [];
+  
+  staticPoints.forEach(p => {
+    if (p.species === 'setosa') setosaData.push({ x: p.x, y: p.y });
+    else if (p.species === 'versicolor') versicolorData.push({ x: p.x, y: p.y });
+    else if (p.species === 'virginica') virginicaData.push({ x: p.x, y: p.y });
+  });
 
-    staticPcaPoints.forEach(p => {
-      if (speciesData[p.species]) {
-        speciesData[p.species].x.push(p.x);
-        speciesData[p.species].y.push(p.y);
-        speciesData[p.species].z.push(p.z);
-      }
-    });
+  const isDark = document.body.classList.contains('dark');
+  const textColor = isDark ? '#9ca3af' : '#64748b';
+  const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(147, 51, 234, 0.04)';
 
-    const userTrace = {
-      x: [userPoint.x],
-      y: [userPoint.y],
-      z: [userPoint.z],
-      name: 'Current Flower',
-      mode: 'markers',
-      type: 'scatter3d',
-      marker: {
-        size: 9,
-        color: '#ec4899', // Pulsing Pink
-        symbol: 'diamond',
-        line: { color: '#ffffff', width: 2 }
-      }
-    };
-
-    const isDark = document.body.classList.contains('dark');
-    const paperBg = isDark ? '#060814' : '#ffffff';
-    const gridColor = isDark ? '#222543' : '#e2e8f0';
-    const textColor = isDark ? '#9ca3af' : '#64748b';
-
-    const layout = {
-      autosize: true,
-      margin: { l: 0, r: 0, b: 0, t: 0 },
-      paper_bgcolor: paperBg,
-      scene: {
-        xaxis: { title: '', showgrid: true, gridcolor: gridColor, backgroundcolor: paperBg, showticklabels: false },
-        yaxis: { title: '', showgrid: true, gridcolor: gridColor, backgroundcolor: paperBg, showticklabels: false },
-        zaxis: { title: '', showgrid: true, gridcolor: gridColor, backgroundcolor: paperBg, showticklabels: false }
+  const ctx = canvas.getContext('2d');
+  pcaChartInstance = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Setosa',
+          data: setosaData,
+          backgroundColor: '#3b82f6',
+          pointRadius: 4
+        },
+        {
+          label: 'Versicolor',
+          data: versicolorData,
+          backgroundColor: '#f59e0b',
+          pointRadius: 4
+        },
+        {
+          label: 'Virginica',
+          data: virginicaData,
+          backgroundColor: '#10b981',
+          pointRadius: 4
+        },
+        {
+          label: 'Current Flower',
+          data: [{ x: userPoint.petalLength, y: userPoint.petalWidth }],
+          backgroundColor: '#ec4899',
+          pointRadius: 10,
+          pointStyle: 'rectRot',
+          borderColor: '#ffffff',
+          borderWidth: 2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color: textColor, font: { family: 'Space Grotesk', size: 9, weight: 'bold' } }
+        }
       },
-      legend: {
-        x: 0,
-        y: 1,
-        font: { color: textColor, size: 10 }
+      scales: {
+        x: {
+          title: { display: true, text: 'Petal Length (cm)', color: textColor, font: { family: 'Space Grotesk', size: 8, weight: 'bold' } },
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { family: 'Space Grotesk', size: 8 } }
+        },
+        y: {
+          title: { display: true, text: 'Petal Width (cm)', color: textColor, font: { family: 'Space Grotesk', size: 8, weight: 'bold' } },
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { family: 'Space Grotesk', size: 8 } }
+        }
       }
-    };
-
-    const plotData = [speciesData.setosa, speciesData.versicolor, speciesData.virginica, userTrace];
-    Plotly.react('pcaDiv', plotData, layout, { displayModeBar: false });
-  } catch (err) {
-    console.error("Plotly render failed:", err);
-  }
+    }
+  });
 }
 
 // Live retraining simulator
@@ -511,13 +525,13 @@ clearHistoryButton.addEventListener('click', () => {
   renderHistory();
 });
 
-async function loadStaticPca() {
+async function loadDataset() {
   try {
-    const res = await fetch('/pca_static');
+    const res = await fetch('/dataset');
     const data = await res.json();
-    staticPcaPoints = data.points;
+    staticPoints = data.points;
   } catch (err) {
-    console.error("Failed loading static PCA:", err);
+    console.error("Failed loading dataset:", err);
   }
 }
 
@@ -527,9 +541,9 @@ window.addEventListener('DOMContentLoaded', () => {
   updateSliderLabels();
   initNeuralSvg();
   
-  loadStaticPca().then(() => {
+  loadDataset().then(() => {
     if (pcaDataCache) {
-      drawPcaPlot(pcaDataCache);
+      drawDatasetPlot(pcaDataCache);
     }
   });
 
