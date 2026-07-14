@@ -165,6 +165,11 @@ function renderPrediction(data) {
   };
   encyclopediaImg.src = imgUrls[data.predictedClass] || encyclopediaImg.src;
 
+  const staticFlowerImg = document.getElementById('staticFlowerImg');
+  if (staticFlowerImg) {
+    staticFlowerImg.src = imgUrls[data.predictedClass] || staticFlowerImg.src;
+  }
+
   saveHistory(data);
 }
 

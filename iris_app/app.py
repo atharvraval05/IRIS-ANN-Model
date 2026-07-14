@@ -18,6 +18,7 @@ app.config["JSON_SORT_KEYS"] = False
 
 MODEL_PATH = Path(__file__).with_name("Iris_ANN.keras")
 model = load_model(MODEL_PATH)
+model(np.zeros((1, 4)))
 
 iris = load_iris()
 FEATURE_NAMES = list(iris.feature_names)
@@ -135,10 +136,12 @@ def predict():
 
     start = time.perf_counter()
     
-    # Compute output and extract hidden layer activations dynamically
-    layer_outputs = [layer.output for layer in model.layers]
-    activation_model = tf.keras.models.Model(inputs=model.input, outputs=layer_outputs)
-    activations = activation_model.predict(features, verbose=0)
+    # Compute hidden layer activations dynamically by executing layer-by-layer
+    x = tf.convert_to_tensor(features, dtype=tf.float32)
+    activations = []
+    for layer in model.layers:
+        x = layer(x)
+        activations.append(x.numpy())
     
     elapsed_ms = round((time.perf_counter() - start) * 1000, 2)
 
